@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+    <h2>Add New Product</h2>
+
+    <form th:action="@{/addProduct}" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="productName">Product Name:</label>
+            <input type="text" class="form-control" id="productName" name="productName" required>
+            <p style="color:red" th:if="${productNameError != null}" th:text="${productNameError}"></p>
+        </div>
+        <div class="form-group">
+            <label for="productCategory">Product Category:</label>
+            <select class="form-control" id="productCategory" name="productCategory" required>
+                <option th:each="category : ${categories}" th:value="${category.categoryName}" th:text="${category.categoryName}"></option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="productPrice">Product Price:</label>
+            <input type="number" class="form-control" id="productPrice" name="productPrice" step="0.01" required>
+        </div>
+        <div class="form-group">
+            <label for="productShortDescription">Product Short Description:</label>
+            <input type="text" class="form-control" name="productShortDescription" id="productShortDescription" required>
+        </div>
+        <div class="form-group">
+            <label for="productDescription">Product Description:</label>
+            <textarea class="form-control" id="productDescription" name="productDescription" rows="4" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="productQuantity">Product Quantity:</label>
+            <input type="number" class="form-control" id="productQuantity" name="productQuantity" required>
+        </div>
+        <div class="form-group">
+            <label for="productImage">Product Image:</label>
+            <input type="file" class="form-control-file" accept="image/*" name="productImage" id="productImage"
+                   required>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    <br>
+    <hr>
+
+    <h2>Transactions:</h2> <br>
+
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">User Name</th>
+            <th scope="col">Product Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Stock</th>
+            <th scope="col">Total Price</th>
+            <th scope="col">Date & Time of Transaction</th>
+        </tr>
+        </thead>
+        <tbody th:if="${transactions != null}" th:each="transaction : ${transactions}">
+        <tr>
+            <td th:if="${transaction.userTransaction != null}"
+                th:text="${transaction.userTransaction.userFirstName + ' ' + transaction.userTransaction.userLastName}"></td>
+            <td th:unless="${transaction.userTransaction != null}" >Not Defined</td>
+
+            <td th:text="${transaction.productTransaction.productName}"></td>
+
+            <td th:if="${transaction.email != null}"
+                th:text="${transaction.email}"></td>
+            <td th:unless="${transaction.email != null}" >Not Defined</td>
+
+            <td th:text="${transaction.stock}"></td>
+
+            <td th:text="${transaction.totalPrice}"></td>
+
+            <td th:text="${transaction.dateTimeOfTransaction}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <hr>
+    <h2>Users:</h2> <br>
+
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">First Name</th>
+            <th scope="col">Last Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Role</th>
+            <th scope="col">Delete</th>
+        </tr>
+        </thead>
+        <tbody th:if="${users != null}" th:each="user : ${users}">
+        <tr>
+            <td th:text="${user.userFirstName != null}"></td>
+
+            <td th:text="${user.userLastName}"></td>
+
+            <td th:text="${user.userEmail}"></td>
+
+            <td th:text="${user.userRole.roleName}"></td>
+
+            <td>
+                <form th:action="@{/delete-user}" method="post">
+                    <input type="hidden" name="userEmail" th:value="${user.userEmail}">
+                    <button class="btn btn-danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <hr>
+    <h2>Products:</h2> <br>
+
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">Product Name</th>
+            <th scope="col">Product Category</th>
+            <th scope="col">Product Price</th>
+            <th scope="col">Product Short Description</th>productQuantity
+            <th scope="col">Product Quantity</th>
+            <th scope="col">Delete</th>
+        </tr>
+        </thead>
+        <tbody th:if="${products != null}" th:each="product : ${products}">
+        <tr>
+            <td th:text="${product.productName}"></td>
+
+            <td th:text="${product.productCategory.categoryName}"></td>
+
+            <td th:text="${product.productPrice}"></td>
+
+            <td th:text="${product.productShortDescription}"></td>
+
+            <td th:text="${product.productQuantity}"></td>
+
+            <td>
+                <form th:action="@{/delete-product}" method="post">
+                    <input type="hidden" name="productName" th:value="${product.productName}">
+                    <button class="btn btn-danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

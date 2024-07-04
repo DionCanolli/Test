@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Page</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  
+</head>
+<body>
+  <div class="container mt-5 ">
+    <div class="row justify-content-center">
+      
+      <div class="col-md-4">
+        <h2 class="text-center mb-4">Order Summary</h2>
+        <table class="table table-bordered">
+          <thead class="thead-dark">
+          <tr>
+            <th scope="col">Product Name</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Total Price</th>
+          </tr>
+          </thead>
+          <tbody th:each="cartItem : ${cart}">
+            <tr>
+              <td th:text="${cartItem.productCart.productName}"></td>
+              <td th:text="${cartItem.quantity}"></td>
+              <td th:text="${cartItem.totalPrice}"></td>
+            </tr>
+          </tbody>
+          <tbody th:each="cookieCartItem : ${cookieCart}">
+            <tr>
+              <td th:text="${cookieCartItem.cookieCartProduct.productName}"></td>
+              <td th:text="${cookieCartItem.quantity}"></td>
+              <td th:text="${cookieCartItem.totalPrice}"></td>
+            </tr>
+          </tbody>
+        </table>
+        <hr>
+        <h3 th:text="${'Total Price: $' + totalPrice}"></h3>
+      </div>
+
+      <div class="col-md-6">
+        <h2 class="text-center mb-4">Payment Information</h2>
+        <form th:action="@{/performPurchase}" method="post">
+
+          <input th:if="${productName != null}" type="hidden" name="productName" th:value="${productName}">
+          <input th:if="${quantitySelectedToBuy != null}" type="hidden" name="quantitySelectedToBuy" th:value="${quantitySelectedToBuy}">
+
+          <div class="mb-3">
+            <label for="cardName" class="form-label">Cardholder's Name</label>
+            <input type="text" class="form-control" name="cardName" id="cardName" placeholder="Enter cardholder's name">
+          </div>
+          <div class="mb-3" th:unless="${#authorization.expression('isAuthenticated()')}">
+            <label for="cardName" class="form-label">Email</label>
+            <input type="text" class="form-control" name="email" id="email" placeholder="Enter email">
+            <input type="hidden" class="form-control" name="emailVerification" id="emailVerification" value="true">
+          </div>
+          <div class="mb-3">
+            <label for="cardNumber" class="form-label">Card Number</label>
+            <input type="text" class="form-control" name="cardNumber" id="cardNumber" placeholder="Enter card number">
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="expirationDate" class="form-label">Expiration Date</label>
+              <input type="text" class="form-control" name="expirationDate" id="expirationDate" placeholder="MM/YY">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="cvv" class="form-label">CVV</label>
+              <input type="text" class="form-control" name="cvv" id="cvv" placeholder="CVV">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="cardType" class="form-label">Card Type</label>
+            <select class="form-select" name="cartType" id="cardType">
+              <option value="visa">Visa</option>
+              <option value="mastercard">MasterCard</option>
+              <option value="amex">American Express</option>
+              <option value="discover">Discover</option>
+            </select>
+          </div>
+          <hr>
+          <div style="display: flex; justify-content: space-around;">
+            <button type="submit" class="btn btn-primary" style="width: 40%;">Pay Now</button>
+          </div>
+        </form>
+        <hr>
+        <div style="display: flex; justify-content: space-around;">
+          <a class="btn btn-danger" style="width: 40%;" th:href="@{/cart}">Cancel</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+  <script>
+    function calculateTotal() {
+      const price = parseFloat(document.getElementById('productPrice').value) || 0;
+      const quantity = parseInt(document.getElementById('productQuantity').value) || 0;
+      const total = price * quantity;
+      document.getElementById('totalPrice').value = total.toFixed(2);
+    }
+  </script>
+</body>
+</html>

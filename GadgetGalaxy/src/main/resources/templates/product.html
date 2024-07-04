@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/product.css}">
+</head>
+<body>
+    <div class="content">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container">
+                <a class="navbar-brand" href="#">GadgedGalaxy</a>
+                <ul class="navbar-nav flex-row" style="margin: 0; padding: 0;">
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/products}" style="margin:0 5px 0 5px">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/wishlist}" style="margin:0 5px 0 5px">Wishlist</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/cart}" style="margin:0 5px 0 5px">Cart</a>
+                    </li>
+                    <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">
+                        <a class="nav-link" th:href="@{/logout}" style="margin:0 5px 0 5px">Logout</a>
+                    </li>
+                    <li class="nav-item" th:unless="${#authorization.expression('isAuthenticated()')}">
+                        <a class="nav-link" th:href="@{/login}" style="margin:0 5px 0 5px">Login</a>
+                    </li>
+                    <li class="nav-item" style="font-weight: 500" th:if="${#authorization.expression('isAuthenticated()')}">
+                        <span class="nav-link" th:text="'Welcome ' + ${#authentication.principal.firstName}"></span>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <br><br>
+
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-6">
+                    <img th:src="@{'/images/' + ${product.productImage} + '.jpg'}" height="420px" width="420px" alt="">
+                </div>
+                <div class="col-md-6">
+                    <h2 th:text="${product.productName}"></h2>
+                    <p class="text-muted" th:text="${product.productCategory.categoryName}"></p>
+                    <h4 th:text="${'$' + product.productPrice}"></h4>
+                    <p th:text="${product.productDescription}"></p>
+                    <hr>
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Stock:</label>
+                        <label id="stock" class="form-label" th:text="${product.productQuantity}" style="font-weight: bold;"></label>
+                    </div>
+                    <div class="mb-3" th:if="${product.productQuantity >= 1}">
+                        <label for="quantity" class="form-label" >Quantity</label>
+                        <input type="number" id="quantity" class="form-control" th:value="1"
+                               min="1" th:max="${product.productQuantity}">
+                    </div>
+                    <br>
+                    <hr>
+                    <br>
+                    <div style="display:flex; justify-content:space-around">
+
+                        <form th:action="@{/add-to-cart}" method="post" id="addToCartForm">
+                            <input type="hidden" name="productName" th:value="${product.productName}">
+                            <input type="hidden" name="quantitySelected" id="quantitySelected">
+                            <button th:if="${product.productQuantity >= 1}" class="btn btn-primary"
+                                    type="submit">Add to Cart</button>
+                        </form>
+
+                        <form th:action="@{/buy}" method="get" id="buyForm">
+                            <input type="hidden" name="productName" th:value="${product.productName}">
+                            <input type="hidden" name="quantitySelectedToBuy" id="quantitySelectedToBuy">
+                            <button th:if="${product.productQuantity >= 1}" type="submit" class="btn btn-warning">Buy now</button>
+                        </form>
+
+                        <form th:action="@{/add-to-wishlist}" method="post">
+                            <input type="hidden" name="productName" th:value="${product.productName}">
+                            <button class="btn btn-danger">Add to Wishlist</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 text-center">
+            <h5>About Me</h5>
+            <p>I'm Dion Canolli, 20, a CS student looking to become a Java Developer.</p>
+          </div>
+          <div class="col-md-6 text-center">
+            <h5>Contact Me</h5>
+            <a href="https://www.linkedin.com/in/dion-canolli-0871a8256/" class="text-white">
+              <i class="fab fa-linkedin fa-2x"></i> My LinkedIn account
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="container-fluid">
+        <div class="row" id="row">
+          <div class="col-md-12 text-center">
+            <p>&copy; 2024 Dion Canolli. All Rights Reserved.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+        document.getElementById('addToCartForm').addEventListener('submit', function(event) {
+            // Prevent the form from submitting immediately
+            event.preventDefault();
+            var quantity = document.getElementById('quantity').value;
+            document.getElementById('quantitySelected').value = quantity;
+            event.target.submit();
+        });
+
+        document.getElementById('buyForm').addEventListener('submit', function(event) {
+            // Prevent the form from submitting immediately
+            event.preventDefault();
+            var quantity = document.getElementById('quantity').value;
+            document.getElementById('quantitySelectedToBuy').value = quantity;
+            event.target.submit();
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

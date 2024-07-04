@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/cart.css}">
+    <style>
+        .footer {
+            width: 100%;
+            background-color: rgb(95, 95, 95);
+            color: white;
+            text-align: center;
+            margin-top: auto; /* Push the footer to the bottom */
+            padding: 20px 0 0 0;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+          <a class="navbar-brand" href="#">GadgedGalaxy</a>
+            <ul class="navbar-nav flex-row" style="margin: 0; padding: 0;">
+            <li class="nav-item">
+              <a class="nav-link" th:href="@{/products}" style="margin:0 5px 0 5px">Products</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" th:href="@{/wishlist}" style="margin:0 5px 0 5px">Wishlist</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" th:href="@{/cart}" style="margin:0 5px 0 5px">Cart</a>
+            </li>
+              <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">
+                  <a class="nav-link" th:href="@{/logout}" style="margin:0 5px 0 5px">Logout</a>
+              </li>
+              <li class="nav-item" th:unless="${#authorization.expression('isAuthenticated()')}">
+                  <a class="nav-link" th:href="@{/login}" style="margin:0 5px 0 5px">Login</a>
+              </li>
+              <li class="nav-item" style="font-weight: 500" th:if="${#authorization.expression('isAuthenticated()')}">
+                  <span class="nav-link" th:text="'Welcome ' + ${#authentication.principal.firstName}"></span>
+              </li>
+          </ul>
+        </div>
+      </nav>
+
+    <div class="container mt-5">
+        <h2 class="mb-4">Shopping Cart</h2>
+        <div class="row">
+            <div class="col-12">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Product</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody th:if="${cart != null}" th:each="cartItem : ${cart}">
+                        <tr>
+                            <td th:text="${cartItem.productCart.productName}"></td>
+                            <td th:text="${cartItem.productCart.productPrice}"></td>
+                            <td th:text="${cartItem.quantity}"></td>
+                            <td th:text="${cartItem.totalPrice}"></td>
+                            <td>
+                                <form th:action="@{/delete-cart-item}">
+                                    <input type="hidden" name="productName" th:value="${cartItem.productCart.productName}">
+                                    <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+
+                    <tbody th:if="${cookieCart != null}" th:each="cookieCartItem : ${cookieCart}">
+                    <tr>
+                        <td th:text="${cookieCartItem.cookieCartProduct.productName}"></td>
+                        <td th:text="${cookieCartItem.cookieCartProduct.productPrice}"></td>
+                        <td th:text="${cookieCartItem.quantity}"></td>
+                        <td th:text="${cookieCartItem.totalPrice}"></td>
+                        <td>
+                            <form th:action="@{/delete-cart-item}">
+                                <input type="hidden" name="productName" th:value="${cookieCartItem.cookieCartProduct.productName}">
+                                <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6 offset-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Cart Summary</h5>
+                        <h4 th:if="${totalPrice != null}" th:text="${'Total: $' + totalPrice}"></h4>
+                        <hr>
+                        <h4 th:unless="${totalPrice != null}" th:text="0"></h4>
+                        <a th:if="${totalPrice >= 0}" th:href="@{/buy}" class="btn btn-primary btn-block">Proceed to Checkout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6 text-center">
+              <h5>About Me</h5>
+              <p>I'm Dion Canolli, 20, a CS student looking to become a Java Developer.</p>
+            </div>
+            <div class="col-md-6 text-center">
+              <h5>Contact Me</h5>
+              <a href="https://www.linkedin.com/in/dion-canolli-0871a8256/" class="text-white">
+                <i class="fab fa-linkedin fa-2x"></i> My LinkedIn account
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-12 text-center" style="background-color: rgb(73, 73, 73);">
+              <p>&copy; 2024 Dion Canolli. All Rights Reserved.</p>
+            </div>
+          </div>
+        </div>
+      </footer>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
